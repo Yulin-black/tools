@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resizable Boxes</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        
+        .container {
+            display: flex;
+            width: 80%; /* 设置大盒子宽度 */
+            height: 300px; /* 设置大盒子高度 */
+            position: relative;
+            border: 1px solid #ccc;
+            margin: 50px auto; /* 居中显示 */
+        }
+
+        .box1,
+        .box2 {
+            height: 100%;
+            overflow: auto;
+            transition: flex 0.2s ease; /* 添加过渡动画 */
+        }
+
+        .divider {
+            width: 5px;
+            cursor: col-resize;
+            background-color: #ccc;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            z-index: 1;
+            left: 30%; /* 初始位置在页面整体宽度的30%处 */
+        }
+
+        .box1 {
+            flex: 3;
+            background-color: lightblue;
+        }
+
+        .box2 {
+            flex: 7;
+            background-color: lightgreen;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box1" id="box1"></div>
+        <div class="divider" id="divider"></div>
+        <div class="box2" id="box2"></div>
+    </div>
+
+    <script>
+        const divider = document.getElementById('divider');
+        const box1 = document.getElementById('box1');
+        const box2 = document.getElementById('box2');
+        const container = document.querySelector('.container');
+        let isDragging = false;
+
+        let containerWidth = container.clientWidth;
+        let initialPosition = containerWidth * 0.3; // 设置初始位置在大盒子宽度的30%处
+
+        divider.style.left = initialPosition + 'px';
+        box1.style.flex = '3';
+        box2.style.flex = '7';
+
+        divider.addEventListener('mousedown', function (e) {
+            isDragging = true;
+        });
+
+        document.addEventListener('mousemove', function (e) {
+            if (!isDragging) return;
+
+            const containerRect = container.getBoundingClientRect();
+            const mouseX = e.clientX - containerRect.left;
+
+            // 限制分界线移动范围在大盒子内部
+            if (mouseX >= 0 && mouseX <= containerWidth) {
+                divider.style.left = mouseX + 'px';
+                box1.style.flex = mouseX / containerWidth * 10;
+                box2.style.flex = 10 - (mouseX / containerWidth * 10);
+            }
+        });
+
+        document.addEventListener('mouseup', function (e) {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>
